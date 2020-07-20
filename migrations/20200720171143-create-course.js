@@ -11,10 +11,13 @@ module.exports = {
       price: {
         type: Sequelize.FLOAT
       },
+      title: {
+        type: Sequelize.STRING
+      },
       description: {
         type: Sequelize.STRING
       },
-      videUrl: {
+      videoUrl: {
         type: Sequelize.STRING
       },
       published: {
