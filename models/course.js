@@ -19,9 +19,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   course.init({
+    title: DataTypes.STRING,
     price: DataTypes.FLOAT,
     description: DataTypes.STRING,
-    videUrl: DataTypes.STRING,
+    videoUrl: DataTypes.STRING,
     published: DataTypes.BOOLEAN
   }, {
     sequelize,
