@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     description: DataTypes.STRING,
     courseId: DataTypes.INTEGER,
     priority: DataTypes.INTEGER,
-    videUrl: DataTypes.STRING,
+    videoUrl: DataTypes.STRING,
     published: DataTypes.BOOLEAN
   }, {
     sequelize,
