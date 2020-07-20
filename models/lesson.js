@@ -11,6 +11,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      lesson.belongsTo(models.course);
+      lesson.hasMany(models.completedLesson)
+      lesson.hasMany(models.todoLesson)
     }
   };
   lesson.init({
