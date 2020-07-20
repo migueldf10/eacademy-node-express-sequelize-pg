@@ -17,7 +17,7 @@ module.exports = {
       priority: {
         type: Sequelize.INTEGER
       },
-      videUrl: {
+      videoUrl: {
         type: Sequelize.STRING
       },
       published: {
