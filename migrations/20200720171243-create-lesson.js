@@ -14,9 +14,6 @@ module.exports = {
       description: {
         type: Sequelize.STRING
       },
-      courseId: {
-        type: Sequelize.INTEGER
-      },
       priority: {
         type: Sequelize.INTEGER
       },
