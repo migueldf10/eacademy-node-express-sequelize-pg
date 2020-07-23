@@ -4,6 +4,7 @@ const Lesson = require('./models').lesson
 const CompletedLesson = require('./models').completedLesson
 const TodoLesson = require('./models').todoLesson
 const Order = require('./models').order
+const Permission = require('./models').permission
 
 // ***********************
 
@@ -12,7 +13,17 @@ const displayUsers = async () => {
 	const usersClean = users.map((user) => console.log(user.get({ plain: true })))
 	return usersClean
 }
-displayUsers()
+// displayUsers()
+
+
+// ***********************
+
+const displayCoursesToUser = async () => {
+	const users = await User.findAll({ include: [Course] })
+	const usersClean = users.map((user) => console.log(user.get({ plain: true })))
+	return usersClean
+}
+displayCoursesToUser()
 
 // ***********************
 
