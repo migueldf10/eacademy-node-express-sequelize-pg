@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       lineItem.belongsTo(models.order)
-      lineItem.hasOne(models.course)
+      lineItem.belongsTo(models.course)
       // define association here
     }
   };
