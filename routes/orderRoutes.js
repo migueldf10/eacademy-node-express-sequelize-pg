@@ -80,7 +80,6 @@ router.put('/success', async function (req, res, next) {
 		const updatedOrder = await order.update({ ...order, state: 'completed' })
 		const plainOrder = await updatedOrder.get({ plain: true })
 		const permissions = await mapLineItemsToPermissions(plainOrder.lineItems, plainOrder.userId, plainOrder.id)
-		console.log('permissions', permissions)
 
 		const orderWithPermissions = await Order.findByPk(id, { include: [Permission] })
 		return res.send(orderWithPermissions)
@@ -93,11 +92,15 @@ router.put('/success', async function (req, res, next) {
 
 
 router.get('/:id', async function (req, res, next) {
-	const id = req.params.id
-	console.log(`We got a request for user id ${id}`)
+	const { id } = req.params
+
 	try {
-		const selectedCourse = await Course.findByPk(id, { include: [Lesson], plain: true })
-		res.send(selectedCourse)
+		const selectedOrder = await Order.findByPk(id, { include: [LineItem], plain: true })
+
+		if (!selectedOrder) {
+			return res.status(404).send('order not found')
+		}
+		res.send(selectedOrder)
 	} catch (e) {
 		console.log(e)
 	}
