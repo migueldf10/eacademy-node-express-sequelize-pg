@@ -20,10 +20,10 @@ module.exports = {
       lineItemPrice: {
         type: Sequelize.FLOAT
       },
-      transactionId: {
+      orderId: {
         type: Sequelize.INTEGER,
         references: {
-          model: "transactions",
+          model: "orders",
           key: "id",
         },
         onUpdate: "CASCADE",
