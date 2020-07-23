@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       user.belongsToMany(models.course, {
-        through: "orders",
+        through: "permissions",
         foreignKey: "userId",
       });
       user.hasMany(models.completedLesson)

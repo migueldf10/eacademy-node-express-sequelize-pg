@@ -3,25 +3,25 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class order extends Model {
+  class permission extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      order.belongsTo(models.user)
-      order.belongsTo(models.course)
+      permission.belongsTo(models.user)
+      permission.belongsTo(models.course)
       // define association here
     }
   };
-  order.init({
+  permission.init({
     userId: DataTypes.INTEGER,
     courseId: DataTypes.INTEGER,
 
   }, {
     sequelize,
-    modelName: 'order',
+    modelName: 'permission',
   });
-  return order;
+  return permission;
 };

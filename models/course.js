@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       course.hasMany(models.lesson);
       course.hasMany(models.lineItem);
       course.belongsToMany(models.user, {
-        through: "orders",
+        through: "permissions",
         foreignKey: "courseId",
       });
       // define association here
