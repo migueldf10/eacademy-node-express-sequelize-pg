@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       permission.belongsTo(models.user)
       permission.belongsTo(models.course)
+      permission.belongsTo(models.order)
       // define association here
     }
   };
