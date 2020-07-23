@@ -4,6 +4,7 @@ const router = express.Router()
 const Order = require('../models').order
 const Course = require('../models').course
 const LineItem = require('../models').lineItem
+const Permission = require('../models').permission
 
 router.post('/', async function (req, res, next) {
 	// console.log(req.body)
@@ -60,17 +61,29 @@ router.put('/success', async function (req, res, next) {
 	if (!id) {
 		return res.status(401).send('provide an id')
 	}
+	const createPermission = async (courseId, userId, orderId) => {
+		return Permission.create({
+			userId,
+			courseId: courseId,
+			orderId
+		})
+	}
+	const mapLineItemsToPermissions = async (lineItems, userId, orderId) => {
+		return Promise.all(lineItems.map(lineItem => createPermission(lineItem.courseId, userId, orderId)))
+	}
 	try {
-		const order = await Order.findByPk(id)
+		const order = await Order.findByPk(id, { include: [LineItem] })
 
 		if (!order) {
 			return res.status(401).send('Order not found')
 		}
 		const updatedOrder = await order.update({ ...order, state: 'completed' })
-		return res.send(updatedOrder)
+		const plainOrder = await updatedOrder.get({ plain: true })
+		const permissions = await mapLineItemsToPermissions(plainOrder.lineItems, plainOrder.userId, plainOrder.id)
+		console.log('permissions', permissions)
 
-
-
+		const orderWithPermissions = await Order.findByPk(id, { include: [Permission] })
+		return res.send(orderWithPermissions)
 
 	} catch (e) {
 		console.log('error', e)
