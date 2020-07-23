@@ -17,7 +17,7 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "SET NULL",
       },
-      price: {
+      lineItemPrice: {
         type: Sequelize.FLOAT
       },
       transactionId: {

@@ -17,6 +17,14 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "SET NULL",
       },
+      price: {
+        allowNull: true,
+        type: Sequelize.FLOAT
+      },
+      notes: {
+        allowNull: true,
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
