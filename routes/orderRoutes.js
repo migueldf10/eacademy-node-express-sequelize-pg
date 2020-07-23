@@ -6,7 +6,7 @@ const Order = require('../models').order
 router.post('/', async function (req, res, next) {
 
 	const { userId,
-		productIds } = req.body
+		courseIds } = req.body
 
 	if (!userId || !price) {
 		res.status(401).send('sorry, you need to provide full order elements')

@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         through: "permissions",
         foreignKey: "userId",
       });
+
       // define association here
     }
   };
