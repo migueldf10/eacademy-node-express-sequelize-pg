@@ -9,16 +9,20 @@ const jwtCheck = require('../middlewares/auth')
 const User = require('../models').user
 
 
+const findOrCreateUser = async (authId) => {
+	const userInDb = await User.findOrCreate({ where: { authId: authId } })
+	return userInDb
+}
 
 router.post('/', jwtCheck, async function (req, res, next) {
 	console.log('enters the query', req.body)
 	// console.log(req.body)
-	const userId = req.user.sub
+	const authId = req.user.sub
 	const {
 		cart,
 		notes = '', } = req.body
 
-	if (!userId || !cart || !cart.length > 0) {
+	if (!authId || !cart || !cart.length > 0) {
 		return res.status(401).send('sorry, you need to provide full order elements')
 	}
 	// Store promises without waiting on each
@@ -41,6 +45,10 @@ router.post('/', jwtCheck, async function (req, res, next) {
 			return res.status(401).send('Some IDS are not in the DB')
 		}
 		const courses = dirtyCourses.map(dirtyCourse => dirtyCourse.get({ plain: true }))
+
+		const user = await findOrCreateUser(authId)
+		const userId = user.id
+
 		const newOrder = await Order.create({
 			userId,
 			price: courses.reduce((a, b) => a + b.price, 0),
