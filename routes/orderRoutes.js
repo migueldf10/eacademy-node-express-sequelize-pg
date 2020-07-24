@@ -5,14 +5,20 @@ const Order = require('../models').order
 const Course = require('../models').course
 const LineItem = require('../models').lineItem
 const Permission = require('../models').permission
+const jwtCheck = require('../middlewares/auth')
+const User = require('../models').user
 
-router.post('/', async function (req, res, next) {
+
+
+router.post('/', jwtCheck, async function (req, res, next) {
+	console.log('enters the query', req.body)
 	// console.log(req.body)
+	const userId = req.user.sub
 	const {
-		userId,
-		courseIds,
+		cart,
 		notes = '', } = req.body
-	if (!userId || !courseIds || !courseIds.length > 0) {
+
+	if (!userId || !cart || !cart.length > 0) {
 		return res.status(401).send('sorry, you need to provide full order elements')
 	}
 	// Store promises without waiting on each
@@ -20,7 +26,7 @@ router.post('/', async function (req, res, next) {
 		return fetchedCourse = Course.findByPk(courseId)
 	}
 	const returnCourses = async () => {
-		return Promise.all(courseIds.map(courseId => findCourses(courseId)))
+		return Promise.all(cart.map(product => findCourses(product.id)))
 	}
 	const createLineItem = async (lineItemObject) => {
 		return createdLineItem = LineItem.create(lineItemObject)
