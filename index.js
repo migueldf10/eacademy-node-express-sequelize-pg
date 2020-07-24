@@ -1,16 +1,33 @@
 const express = require('express')
-const app = express()
-// Environment decides port when in Heroku
+const jwtCheck = require('./middlewares/auth')
+
 const port = process.env.PORT || 4000
+
+// Routes
 const courseRoutes = require('./routes/courseRoutes')
 const orderRoutes = require('./routes/orderRoutes')
 
-// Middlewares for testing front end
-const jsonParser = express.json();
-const cors = require("cors");
 
+const app = express()
+// Middlewares for testing front end
+
+const jsonParser = express.json();
 app.use(jsonParser);
+const cors = require("cors");
 app.use(cors());
+
+
+
+
+
+
+app.get('/authorized', jwtCheck, function (req, res) {
+	console.log('it works')
+	console.log('all info', req.user.sub)
+	res.send('Secured Resource');
+});
+
+
 
 app.get('/', (req, res) => res.send('Hello World!'))
 
