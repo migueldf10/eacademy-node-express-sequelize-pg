@@ -21,11 +21,11 @@ app.use(cors());
 
 
 
-app.get('/authorized', jwtCheck, function (req, res) {
-	console.log('it works')
-	console.log('all info', req.user.sub)
-	res.send('Secured Resource');
-});
+// app.get('/authorized', jwtCheck, function (req, res) {
+// 	console.log('it works')
+// 	console.log('all info', req.user.sub)
+// 	res.send('Secured Resource');
+// });
 
 
 
