@@ -11,10 +11,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       course.hasMany(models.lesson);
+      course.hasMany(models.lineItem);
       course.belongsToMany(models.user, {
-        through: "orders",
-        foreignKey: "courseId",
+        through: "permissions",
+        foreignKey: "userId",
       });
+
       // define association here
     }
   };

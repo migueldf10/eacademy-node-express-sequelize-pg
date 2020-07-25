@@ -11,14 +11,15 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       order.belongsTo(models.user)
-      order.belongsTo(models.course)
-      // define association here
+      order.hasMany(models.lineItem)
+      order.hasMany(models.permission)
     }
   };
   order.init({
     userId: DataTypes.INTEGER,
-    courseId: DataTypes.INTEGER,
-    transactionId: DataTypes.INTEGER
+    price: DataTypes.FLOAT,
+    notes: DataTypes.STRING,
+    state: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'order',

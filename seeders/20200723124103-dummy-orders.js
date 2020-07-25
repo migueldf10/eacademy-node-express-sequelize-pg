@@ -7,44 +7,31 @@ module.exports = {
       [
         {
           userId: 1,
-          courseId: 1,
-          transactionId: 1,
+          state: 'draft',
+          price: 50.3,
+          notes: 'Only for admins',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
           userId: 1,
-          courseId: 2,
-          transactionId: 2,
+          state: 'completed',
+          price: 80.3,
+          notes: 'Only for admins',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
           userId: 2,
-          courseId: 2,
-          transactionId: 4,
+          state: 'draft',
+          price: 50.3,
+          notes: 'Only for admins',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
-        {
-          userId: 3,
-          courseId: 1,
-          transactionId: 5,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          userId: 3,
-          courseId: 2,
-          transactionId: 6,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
+      ]
+    )
 
-
-      ],
-      {}
-    );
   },
 
   down: async (queryInterface, Sequelize) => {
