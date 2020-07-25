@@ -14,9 +14,12 @@ const findOrCreateUser = async (authId) => {
 	return userInDb
 }
 
+
+// ********************************
+// POST NEW ORDER
+// ********************************
+
 router.post('/', jwtCheck, async function (req, res, next) {
-	console.log('enters the query', req.body)
-	// console.log(req.body)
 	const authId = req.user.sub
 	const {
 		cart,
@@ -25,25 +28,29 @@ router.post('/', jwtCheck, async function (req, res, next) {
 	if (!authId || !cart || !cart.length > 0) {
 		return res.status(401).send('sorry, you need to provide full order elements')
 	}
-	// Store promises without waiting on each
-	const findCourses = async (courseId) => {
+
+	// Promise Creators
+	const findEachCourse = async (courseId) => {
 		return fetchedCourse = Course.findByPk(courseId)
 	}
-	const returnCourses = async () => {
-		return Promise.all(cart.map(product => findCourses(product.id)))
+	const findCourses = async () => {
+		return Promise.all(cart.map(product => findEachCourse(product.id)))
 	}
-	const createLineItem = async (lineItemObject) => {
+	const createEachLineItem = async (lineItemObject) => {
 		return createdLineItem = LineItem.create(lineItemObject)
 	}
 	const createLineItems = async (lineItemsObjects) => {
-		return Promise.all(lineItemsObjects.map(lineItemObject => createLineItem(lineItemObject)))
+		return Promise.all(lineItemsObjects.map(lineItemObject => createEachLineItem(lineItemObject)))
 	}
 
+	// Action!
 	try {
-		const dirtyCourses = await returnCourses()
+		const dirtyCourses = await findCourses()
+
 		if (!dirtyCourses || dirtyCourses.includes(null)) {
 			return res.status(401).send('Some IDS are not in the DB')
 		}
+
 		const courses = dirtyCourses.map(dirtyCourse => dirtyCourse.get({ plain: true }))
 
 		const user = await findOrCreateUser(authId)
@@ -55,26 +62,45 @@ router.post('/', jwtCheck, async function (req, res, next) {
 			notes,
 			state: 'draft'
 		})
+
 		const lineItemsObjects = courses.map(course => ({
 			orderId: newOrder.id,
 			lineItemPrice: course.price,
 			courseId: course.id
 		}))
+
 		const createdLineItems = await createLineItems(lineItemsObjects)
+
 		const orderCreatedWithLineItems = await Order.findByPk(newOrder.id, { include: [LineItem] })
+
 		return res.send(orderCreatedWithLineItems)
+
 	} catch (e) {
+
 		console.log('error', e)
 		return res.status(500).send('something ocurred')
+
 	}
 })
 
 
-router.put('/success', async function (req, res, next) {
+
+
+// ********************************
+// PUT FINISH ORDER 'will be called by stripe, so I keep in the req the id, although now there is a test if it's the same as provided in JWT
+// ********************************
+
+router.put('/success', jwtCheck, async function (req, res, next) {
+
+	console.log('tries to enter in the sucessendpoint', req.body)
 	const { id } = req.body
+	const authId = req.user.sub
+
 	if (!id) {
 		return res.status(401).send('provide an id')
 	}
+
+	// Promise Creators
 	const createPermission = async (courseId, userId, orderId) => {
 		return Permission.create({
 			userId,
@@ -85,17 +111,32 @@ router.put('/success', async function (req, res, next) {
 	const mapLineItemsToPermissions = async (lineItems, userId, orderId) => {
 		return Promise.all(lineItems.map(lineItem => createPermission(lineItem.courseId, userId, orderId)))
 	}
-	try {
-		const order = await Order.findByPk(id, { include: [LineItem] })
 
-		if (!order) {
+	// Action!
+	try {
+
+		// Check there is same user in request and database
+		const user = await findOrCreateUser(authId)
+
+		const orderToUpdate = await Order.findByPk(id, { include: [LineItem] })
+		if (!orderToUpdate) {
 			return res.status(401).send('Order not found')
 		}
-		const updatedOrder = await order.update({ ...order, state: 'completed' })
+
+		if (user.authId !== order.userId) return res.status(401).send("something is wrong with your request")
+
+		// Find order and check if it exists
+
+
+		// Convert order line items into permissions
+
+		const updatedOrder = await orderToUpdate.update({ ...orderToUpdate, state: 'completed' })
 		const plainOrder = await updatedOrder.get({ plain: true })
 		const permissions = await mapLineItemsToPermissions(plainOrder.lineItems, plainOrder.userId, plainOrder.id)
 
 		const orderWithPermissions = await Order.findByPk(id, { include: [Permission] })
+
+		console.log(orderWithPermissions)
 		return res.send(orderWithPermissions)
 
 	} catch (e) {
@@ -104,20 +145,23 @@ router.put('/success', async function (req, res, next) {
 	}
 })
 
+// ********************************
+// FETCH ONE ORDER BY ID
+// ********************************
 
-router.get('/:id', async function (req, res, next) {
-	const { id } = req.params
+// router.get('/:id', async function (req, res, next) {
+// 	const { id } = req.params
 
-	try {
-		const selectedOrder = await Order.findByPk(id, { include: [LineItem], plain: true })
+// 	try {
+// 		const selectedOrder = await Order.findByPk(id, { include: [LineItem], plain: true })
 
-		if (!selectedOrder) {
-			return res.status(404).send('order not found')
-		}
-		res.send(selectedOrder)
-	} catch (e) {
-		console.log(e)
-	}
-})
+// 		if (!selectedOrder) {
+// 			return res.status(404).send('order not found')
+// 		}
+// 		res.send(selectedOrder)
+// 	} catch (e) {
+// 		console.log(e)
+// 	}
+// })
 
 module.exports = router
