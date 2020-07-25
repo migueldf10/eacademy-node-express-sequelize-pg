@@ -8,8 +8,26 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      transactionId: {
+      userId: {
         type: Sequelize.INTEGER,
+        references: {
+          model: "users",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL",
+      },
+      price: {
+        allowNull: true,
+        type: Sequelize.FLOAT
+      },
+      state: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      notes: {
+        allowNull: true,
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
