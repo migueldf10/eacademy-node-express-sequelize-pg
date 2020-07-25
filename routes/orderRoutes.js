@@ -118,25 +118,20 @@ router.put('/success', jwtCheck, async function (req, res, next) {
 		// Check there is same user in request and database
 		const user = await findOrCreateUser(authId)
 
+		// Find order and check if it exists
 		const orderToUpdate = await Order.findByPk(id, { include: [LineItem] })
 		if (!orderToUpdate) {
 			return res.status(401).send('Order not found')
 		}
-
+		// Check if it matches with the user that sends the request
 		if (user.authId !== order.userId) return res.status(401).send("something is wrong with your request")
-
-		// Find order and check if it exists
-
 
 		// Convert order line items into permissions
 
 		const updatedOrder = await orderToUpdate.update({ ...orderToUpdate, state: 'completed' })
 		const plainOrder = await updatedOrder.get({ plain: true })
 		const permissions = await mapLineItemsToPermissions(plainOrder.lineItems, plainOrder.userId, plainOrder.id)
-
 		const orderWithPermissions = await Order.findByPk(id, { include: [Permission] })
-
-		console.log(orderWithPermissions)
 		return res.send(orderWithPermissions)
 
 	} catch (e) {
