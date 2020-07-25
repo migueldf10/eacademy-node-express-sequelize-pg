@@ -10,8 +10,9 @@ const User = require('../models').user
 
 
 const findOrCreateUser = async (authId) => {
-	const userInDb = await User.findOrCreate({ where: { authId: authId } })
-	return userInDb
+	const userInDb = await User.findOrCreate({ where: { authId: authId }, raw: true })
+	// Since we use find or create, userInDb has this shape [object,isCreatedNow]
+	return userInDb[0]
 }
 
 
@@ -54,7 +55,10 @@ router.post('/', jwtCheck, async function (req, res, next) {
 		const courses = dirtyCourses.map(dirtyCourse => dirtyCourse.get({ plain: true }))
 
 		const user = await findOrCreateUser(authId)
+		console.log('user object', user)
 		const userId = user.id
+
+		console.log('userId', userId)
 
 		const newOrder = await Order.create({
 			userId,
@@ -120,17 +124,20 @@ router.put('/success', jwtCheck, async function (req, res, next) {
 
 		// Find order and check if it exists
 		const orderToUpdate = await Order.findByPk(id, { include: [LineItem] })
+
+		console.log(orderToUpdate)
 		if (!orderToUpdate) {
 			return res.status(401).send('Order not found')
 		}
 		// Check if it matches with the user that sends the request
-		if (user.authId !== order.userId) return res.status(401).send("something is wrong with your request")
+		if (user.id !== orderToUpdate.userId) return res.status(401).send("something is wrong with your request")
 
 		// Convert order line items into permissions
 
 		const updatedOrder = await orderToUpdate.update({ ...orderToUpdate, state: 'completed' })
-		const plainOrder = await updatedOrder.get({ plain: true })
-		const permissions = await mapLineItemsToPermissions(plainOrder.lineItems, plainOrder.userId, plainOrder.id)
+		console.log('updated Order', updatedOrder)
+		const permissions = await mapLineItemsToPermissions(updatedOrder.lineItems, updatedOrder.userId, updatedOrder.id)
+		console.log('created permissions', permissions)
 		const orderWithPermissions = await Order.findByPk(id, { include: [Permission] })
 		return res.send(orderWithPermissions)
 
