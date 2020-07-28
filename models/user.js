@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       user.hasMany(models.completedLesson)
       user.hasMany(models.todoLesson)
       user.hasMany(models.order)
+      user.hasMany(models.permission)
     }
   };
   user.init({
