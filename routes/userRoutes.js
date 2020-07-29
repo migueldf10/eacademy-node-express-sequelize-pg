@@ -29,7 +29,7 @@ router.get('/', jwtCheck, async function (req, res, next) {
 	try {
 
 		const user = await User.findOrCreate({ where: { authId: authId }, plain: true, include: [Course, CompletedLesson, TodoLesson] })
-		return res.send(user)
+		return res.send(user[0])
 
 	} catch (e) {
 
