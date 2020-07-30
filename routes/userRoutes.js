@@ -33,36 +33,37 @@ router.get('/', jwtCheck, async function (req, res, next) {
 		const user = await User.findOrCreate({
 			where: { authId: authId },
 			plain: true,
-			include: [{
-				model: Course,
+			include: [
+				{
+					model: Course,
+					attributes: ['id', 'title'],
+				},
+				{
+					model: TodoLesson,
+					attributes: ['id'],
+					include: [{
+						model: Lesson,
+						attributes: ['title', 'courseId']
+					}]
 
-			}]
-			// include: [{
-			// 	model: Permission,
-			// 	include: [{
-			// 		model: Course,
-			// 		attributes: ['id', 'title'],
-			// 	}]
-			// }]
+				},
+				{
+					model: CompletedLesson,
+					attributes: ['id'],
+					include: [{
+						model: Lesson,
+						attributes: ['title', 'courseId']
+					}]
+
+				}
+			]
 		})
-
-
-		// const courses = await TodoLesson.findAll({
-		// 	where: { userId: user[0].id },
-		// 	include: [{
-		// 		model: Lesson,
-		// 	}]
-		// })
-
-		// console.log(courses)
-
 		return res.send(user[0])
 
 	} catch (e) {
 
 		console.log('error', e)
 		return res.status(500).send('something ocurred')
-
 	}
 })
 
