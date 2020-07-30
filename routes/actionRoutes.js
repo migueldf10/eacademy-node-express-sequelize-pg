@@ -59,7 +59,6 @@ router.put('/toggleLessonAsTodo/:lessonId', jwtCheck, async function (req, res, 
 		}
 
 		// Is the lesson in the already todo list?
-		const todoLessonsItem = user.todoLessons.find(todoItem => todoItem.lessonId === lessonId)
 
 		if (set === false) {
 			const todoItemInDb = await TodoLesson.findAll({
@@ -88,7 +87,13 @@ router.put('/toggleLessonAsTodo/:lessonId', jwtCheck, async function (req, res, 
 	}
 })
 
-router.put('/toggleLessonDone/:lessonId', jwtCheck, async function (req, res, next) {
+
+
+
+
+
+
+router.put('/toggleLessonAsDone/:lessonId', jwtCheck, async function (req, res, next) {
 	const authId = req.user.sub
 	const { set } = req.body
 	console.log('set', set)
@@ -97,11 +102,11 @@ router.put('/toggleLessonDone/:lessonId', jwtCheck, async function (req, res, ne
 	if (!lessonId || isNaN(lessonId)) { return res.status(401).send('Not valid lesson...') }
 
 	// Promise Creators
-	const deleteTodo = async (todo) => {
-		return todo.destroy()
+	const deleteCompleted = async (completedLesson) => {
+		return completedLesson.destroy()
 	}
-	const mapExistingTodos = async (todos) => {
-		return Promise.all(todos.map(todo => deleteTodo(todo)))
+	const mapExistingCompleted = async (completedLessons) => {
+		return Promise.all(completedLessons.map(completedLesson => deleteCompleted(completedLesson)))
 	}
 
 	try {
@@ -113,7 +118,7 @@ router.put('/toggleLessonDone/:lessonId', jwtCheck, async function (req, res, ne
 					attributes: ['courseId'],
 				},
 				{
-					model: TodoLesson,
+					model: CompletedLesson,
 					attributes: ['id', 'lessonId'],
 				},
 			],
@@ -135,18 +140,16 @@ router.put('/toggleLessonDone/:lessonId', jwtCheck, async function (req, res, ne
 			return res.status(401).send('Not permissions...')
 		}
 
-		// Is the lesson in the already todo list?
-		const todoLessonsItem = user.todoLessons.find(todoItem => todoItem.lessonId === lessonId)
 
 		if (set === false) {
-			const todoItemInDb = await TodoLesson.findAll({
+			const completedLessonInDb = await CompletedLesson.findAll({
 				where: {
 					userId: user.id,
 					lessonId: lessonId
 				}
 			})
-			if (todoItemInDb) {
-				await mapExistingTodos(todoItemInDb)
+			if (completedLessonInDb) {
+				await mapExistingCompleted(completedLessonInDb)
 				return res.send({ state: 'sucess' })
 			}
 		}
@@ -155,11 +158,11 @@ router.put('/toggleLessonDone/:lessonId', jwtCheck, async function (req, res, ne
 
 
 
-		const todoItemInDb = await TodoLesson.create({
+		const completedLessonInDb = await CompletedLesson.create({
 			userId: user.id,
 			lessonId: lessonId
 		})
-		res.send(todoItemInDb)
+		res.send(completedLessonInDb)
 	} catch (e) {
 		console.log(e)
 	}
