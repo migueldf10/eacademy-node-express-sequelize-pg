@@ -44,8 +44,6 @@ router.get('/:lessonId', jwtCheck, async function (req, res, next) {
 		if (!coursesIds.includes(selectedLesson.courseId)) {
 			return res.status(401).send('Not permissions...')
 		}
-
-
 		res.send(selectedLesson)
 	} catch (e) {
 		console.log(e)
