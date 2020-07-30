@@ -70,7 +70,7 @@ router.put('/toggleLessonDone/:lessonId', jwtCheck, async function (req, res, ne
 			})
 			if (todoItemInDb) {
 				await mapExistingTodos(todoItemInDb)
-				return res.send('sucess')
+				return res.send({ state: 'sucess' })
 			}
 		}
 

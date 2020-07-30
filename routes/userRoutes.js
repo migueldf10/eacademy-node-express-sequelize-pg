@@ -40,7 +40,7 @@ router.get('/', jwtCheck, async function (req, res, next) {
 				},
 				{
 					model: TodoLesson,
-					attributes: ['id'],
+					attributes: ['id', 'lessonId'],
 					include: [{
 						model: Lesson,
 						attributes: ['title', 'courseId']
