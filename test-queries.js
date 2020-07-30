@@ -16,7 +16,20 @@ const displayUserByAuthId = async (authId) => {
 
 
 
-displayUserByAuthId('auth0|5f1824bc35b4680013aeb429')
+// displayUserByAuthId('auth0|5f1824bc35b4680013aeb429')
+
+
+// ***********************
+
+
+const displayUserWithTodoLessons = async (authId) => {
+	const user = await User.findOrCreate({ where: { authId: authId }, plain: true, include: [{ model: Course, include: [{ model: Lesson, include: [CompletedLesson, TodoLesson] }] }] })
+	return console.log(user)
+}
+
+
+
+displayUserWithTodoLessons('auth0|5f1824bc35b4680013aeb429')
 
 
 // ***********************

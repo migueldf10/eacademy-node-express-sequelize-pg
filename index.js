@@ -7,6 +7,7 @@ const courseRoutes = require('./routes/courseRoutes')
 const orderRoutes = require('./routes/orderRoutes')
 const userRoutes = require('./routes/userRoutes')
 const myCoursesRoutes = require('./routes/myCoursesRoutes')
+const lessonRoutes = require('./routes/lessonRoutes')
 
 
 const app = express()
@@ -39,3 +40,4 @@ app.use('/course', courseRoutes)
 app.use('/orders', orderRoutes)
 app.use('/users', userRoutes)
 app.use('/myCourses', myCoursesRoutes)
+app.use('/lessons', lessonRoutes)
