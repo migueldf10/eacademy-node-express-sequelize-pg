@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       course.hasMany(models.lineItem);
       course.belongsToMany(models.user, {
         through: "permissions",
-        foreignKey: "userId",
+        foreignKey: "courseId",
       });
 
       // define association here

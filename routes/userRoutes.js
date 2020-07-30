@@ -3,6 +3,7 @@ const order = require('../models/order')
 const router = express.Router()
 const Order = require('../models').order
 const Course = require('../models').course
+const Lesson = require('../models').lesson
 const LineItem = require('../models').lineItem
 const Permission = require('../models').permission
 const CompletedLesson = require('../models').completedLesson
@@ -28,7 +29,33 @@ router.get('/', jwtCheck, async function (req, res, next) {
 	// Action!
 	try {
 
-		const user = await User.findOrCreate({ where: { authId: authId }, plain: true, include: [Course, CompletedLesson, TodoLesson] })
+		// const user = await User.findOrCreate({ where: { authId: authId }, plain: true, include: [Course, CompletedLesson, TodoLesson] })
+		const user = await User.findOrCreate({
+			where: { authId: authId },
+			plain: true,
+			include: [{
+				model: Course,
+
+			}]
+			// include: [{
+			// 	model: Permission,
+			// 	include: [{
+			// 		model: Course,
+			// 		attributes: ['id', 'title'],
+			// 	}]
+			// }]
+		})
+
+
+		// const courses = await TodoLesson.findAll({
+		// 	where: { userId: user[0].id },
+		// 	include: [{
+		// 		model: Lesson,
+		// 	}]
+		// })
+
+		// console.log(courses)
+
 		return res.send(user[0])
 
 	} catch (e) {
