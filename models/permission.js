@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
   permission.init({
     userId: DataTypes.INTEGER,
     courseId: DataTypes.INTEGER,
+    orderId: DataTypes.INTEGER,
 
   }, {
     sequelize,

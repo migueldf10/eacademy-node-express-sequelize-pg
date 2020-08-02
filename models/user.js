@@ -12,11 +12,12 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       user.belongsToMany(models.course, {
         through: "permissions",
-        foreignKey: "courseId",
+        foreignKey: "userId",
       });
       user.hasMany(models.completedLesson)
       user.hasMany(models.todoLesson)
       user.hasMany(models.order)
+      user.hasMany(models.permission)
     }
   };
   user.init({
@@ -26,4 +27,4 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'user',
   });
   return user;
-};
+}; 
