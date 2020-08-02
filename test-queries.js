@@ -7,6 +7,31 @@ const Order = require('./models').order
 const Permission = require('./models').permission
 const LineItem = require('./models').lineItem
 
+
+
+const displayUserByAuthId = async (authId) => {
+	const user = await User.findOrCreate({ where: { authId: authId }, plain: true, include: [Course, CompletedLesson, TodoLesson, Order] })
+	return console.log(user)
+}
+
+
+
+// displayUserByAuthId('auth0|5f1824bc35b4680013aeb429')
+
+
+// ***********************
+
+
+const displayUserWithTodoLessons = async (authId) => {
+	const user = await User.findOrCreate({ where: { authId: authId }, plain: true, include: [{ model: Course, include: [{ model: Lesson, include: [CompletedLesson, TodoLesson] }] }] })
+	return console.log(user)
+}
+
+
+
+displayUserWithTodoLessons('auth0|5f1824bc35b4680013aeb429')
+
+
 // ***********************
 
 const displayUsers = async () => {
@@ -95,8 +120,6 @@ const displayOrdersWithCourseId = async (courseId) => {
 	// const coursesClean = course.get({ plain: true })
 	// return console.log(coursesClean)
 }
-displayOrdersWithCourseId(1)
+// displayOrdersWithCourseId(1)
 
 // ***********************
-
-
