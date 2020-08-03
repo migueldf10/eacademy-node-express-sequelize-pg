@@ -52,13 +52,34 @@ router.get('/:lessonId', jwtCheck, async function (req, res, next) {
 
 router.post('/', jwtCheck, async function (req, res, next) {
 	const isAdmin = req.user['https://thedutchonlineacademy.com/roles'].includes('admin')
-	if(!isAdmin) return res.status(401).send('Not authorized')
-	
-	const {courseId,title} = req.body
-	if(!courseId|| !title) return res.status(400).send('missing elements')
+	if (!isAdmin) return res.status(401).send('Not authorized')
+
+	const { courseId, title } = req.body
+	if (!courseId || !title) return res.status(400).send('missing elements')
 	try {
-		const newLeson = await Lesson.create(req.body)
+		const newLeson = await Lesson.create({ ...req.body, published: false, priority: 1 })
 		res.send(newLeson)
+	} catch (e) {
+		console.log(e)
+	}
+})
+
+router.put('/:lessonId', jwtCheck, async function (req, res, next) {
+	const isAdmin = req.user['https://thedutchonlineacademy.com/roles'].includes('admin')
+	if (!isAdmin) return res.status(401).send('Not authorized')
+
+	const lessonId = req.params.lessonId
+	if (!lessonId) return res.status(404).send('Not lesson')
+
+	const newLesson = req.body
+
+	try {
+		const selectedLesson = await Lesson.findByPk(lessonId)
+		selectedLesson.title = newLesson.title || selectedLesson.title
+		selectedLesson.description = newLesson.description || selectedLesson.description
+		selectedLesson.videoUrl = newLesson.videoUrl || selectedLesson.videoUrl
+		const savedLesson = await selectedLesson.save()
+		res.send(savedLesson)
 	} catch (e) {
 		console.log(e)
 	}
