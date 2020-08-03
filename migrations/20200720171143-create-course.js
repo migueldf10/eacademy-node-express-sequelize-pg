@@ -15,7 +15,8 @@ module.exports = {
         type: Sequelize.STRING
       },
       description: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(4000)
+
       },
       videoUrl: {
         type: Sequelize.STRING
