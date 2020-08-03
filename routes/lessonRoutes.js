@@ -50,5 +50,21 @@ router.get('/:lessonId', jwtCheck, async function (req, res, next) {
 	}
 })
 
+router.post('/', jwtCheck, async function (req, res, next) {
+	const isAdmin = req.user['https://thedutchonlineacademy.com/roles'].includes('admin')
+	if(!isAdmin) return res.status(401).send('Not authorized')
+	
+	const {courseId,title} = req.body
+	if(!courseId|| !title) return res.status(400).send('missing elements')
+	try {
+		const newLeson = await Lesson.create(req.body)
+		res.send(newLeson)
+	} catch (e) {
+		console.log(e)
+	}
+})
+
+
+
 
 module.exports = router 
